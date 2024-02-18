@@ -168,6 +168,7 @@ fn print_start() {
         for _ in 0..10 {
             if let Some(line) = lines.next() {
                 println!("{}", line);
+                
             }
         }
 
