@@ -1,4 +1,4 @@
-use crossterm::{cursor, execute, terminal, QueueableCommand};
+use crossterm::{terminal};
 use std::io::{self, BufRead};
 use std::{thread, time};
 
