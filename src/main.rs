@@ -1,5 +1,5 @@
+use crossterm::{cursor, execute, terminal, QueueableCommand};
 use std::io::{self, BufRead};
-use crossterm::{cursor,execute, terminal, QueueableCommand};
 use std::{thread, time};
 
 struct Board {
@@ -52,7 +52,11 @@ impl Board {
             for i in 0..x_lab.len() {
                 let x_index = x as isize + x_lab[i];
                 let y_index = y as isize + y_lab[i];
-                if x_index >= 0 && x_index < self.W as isize && y_index >= 0 && y_index < self.H as isize {
+                if x_index >= 0
+                    && x_index < self.W as isize
+                    && y_index >= 0
+                    && y_index < self.H as isize
+                {
                     if self.V[y_index as usize][x_index as usize] == 1 {
                         count += 1;
                     }
@@ -61,14 +65,16 @@ impl Board {
             self.S[y][x] = count;
         }
     }
-    
 
     fn input_coordinates(&mut self) -> (usize, usize) {
         let stdin = io::stdin();
         loop {
             println!("Enter x coordinate (0-{}):", self.W - 1);
             let mut input_x = String::new();
-            stdin.lock().read_line(&mut input_x).expect("Failed to read line");
+            stdin
+                .lock()
+                .read_line(&mut input_x)
+                .expect("Failed to read line");
             let x: usize = match input_x.trim().parse() {
                 Ok(num) => num,
                 Err(_) => {
@@ -77,13 +83,19 @@ impl Board {
                 }
             };
             if x >= self.W {
-                println!("Invalid x coordinate. Please enter a number between 0 and {}.", self.W - 1);
+                println!(
+                    "Invalid x coordinate. Please enter a number between 0 and {}.",
+                    self.W - 1
+                );
                 continue;
             }
 
             println!("Enter y coordinate (0-{}):", self.H - 1);
             let mut input_y = String::new();
-            stdin.lock().read_line(&mut input_y).expect("Failed to read line");
+            stdin
+                .lock()
+                .read_line(&mut input_y)
+                .expect("Failed to read line");
             let y: usize = match input_y.trim().parse() {
                 Ok(num) => num,
                 Err(_) => {
@@ -92,10 +104,13 @@ impl Board {
                 }
             };
             if y >= self.H {
-                println!("Invalid y coordinate. Please enter a number between 0 and {}.", self.H - 1);
+                println!(
+                    "Invalid y coordinate. Please enter a number between 0 and {}.",
+                    self.H - 1
+                );
                 continue;
             }
-            
+
             return (x, y);
         }
     }
@@ -105,7 +120,7 @@ fn main() {
     //初期設定
     let mut board = Board::new(5, 5);
     board.set_bomb(5);
-    
+
     //スタート画面
     print_start();
 
@@ -118,15 +133,15 @@ fn main() {
     }
 }
 
-fn print_start(){
+fn print_start() {
     print!("{}", terminal::Clear(terminal::ClearType::All));
-   // クリアする空白の行をプリント
-   for _ in 0..10 {
-    println!();
-}
+    // クリアする空白の行をプリント
+    for _ in 0..10 {
+        println!();
+    }
 
-// アニメーション
-let logo = r#"
+    // アニメーション
+    let logo = r#"
 ,,
 `7MMM.     ,MMF'  db
   MMMb    dPMM
@@ -140,28 +155,28 @@ let logo = r#"
 
 "#;
 
-let mut offset = 0;
-loop {
-    // ターミナルをクリア
-    print!("\x1B[2J\x1B[1;1H");
+    let mut offset = 0;
+    loop {
+        // ターミナルをクリア
+        print!("\x1B[2J\x1B[1;1H");
 
-    // ロゴを表示
-    let mut lines = logo.lines();
-    for _ in 0..offset {
-        lines.next();
-    }
-    for _ in 0..10 {
-        if let Some(line) = lines.next() {
-            println!("{}", line);
+        // ロゴを表示
+        let mut lines = logo.lines();
+        for _ in 0..offset {
+            lines.next();
         }
+        for _ in 0..10 {
+            if let Some(line) = lines.next() {
+                println!("{}", line);
+            }
+        }
+
+        // アニメーションの速度を調整するために一定の時間待機
+        thread::sleep(time::Duration::from_millis(100));
+
+        // オフセットを更新し、ロゴをスクロール
+        offset = (offset + 1) % 4;
+
+        break;
     }
-
-    // アニメーションの速度を調整するために一定の時間待機
-    thread::sleep(time::Duration::from_millis(100));
-
-    // オフセットを更新し、ロゴをスクロール
-    offset = (offset + 1) % 4;
-
-    break;
-}
 }
